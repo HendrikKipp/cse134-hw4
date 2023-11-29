@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Form</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            padding-top: 5%;
+        }
+        form{
+            width: 600px;
+            display: flex;
+            flex-flow: column;
+            padding: 1em;
+            gap: 1em;
+        }
+        field-group{
+            display: flex;
+            flex-flow: column;
+            gap: 0.25em;
+        }
+        input, textarea{
+            padding: 0.5em;
+            border-radius: 0.5em;
+            border: none;
+            background-color: #ececec;
+            border: 3px solid white;
+        }
+        label{
+            font-weight: bold;
+            padding: 0 3px;
+        }
+        input[type=submit]:hover{
+            background-color: lightgreen;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        input:user-invalid{
+            border: 3px dashed red;
+        }
+        output{
+            display: none;
+        }
+        .error{
+            color: red;
+        }
+        input:user-invalid + .error{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <form action="https://httpbin.org/post" method="post">
+        <field-group>
+            <label for="name">Name:</label>
+            <input id="name" name="name" required minlength="2">
+            <output for="name" id="nameError" class="error">A valid name with a length of at least 2 must be inserted</output>
+            <output for="name" id="nameMessage" class="message"></output>
+        </field-group>
+        <field-group>
+            <label for="email">Email:</label>
+            <input id="email" type="email" name="email" required minlength="3">
+            <output for="email" id="emailError" class="error">A valid email address must be entered</output>
+            <output for="email" id="emailMessage" class="message"></output>
+        </field-group>
+        <field-group>
+            <label for="comments">Comments:</label>
+            <input id="comments" name="comments" rows="3" required minlength="10" maxlength="140" pattern="[a-zA-Z0-9\s.!]+">
+            <output for="comments" id="commentsError" class="error">A valid comment must be inserted. This must contain between 10 and 140 characters and must not contain any special characters (only lower and upper case letters, spaces,
+                exclamation marks and periods allowed)</output>
+            <output for="comments" id="commentsMessage" class="message"></output>
+        </field-group>
+
+        <input name="possible_bot" value="true" type="hidden">
+
+        <input type="submit">
+    </form>
+</body>
+</html>

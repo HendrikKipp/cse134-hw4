@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Form</title>
+    <link id="themeStyleSheet" rel="stylesheet" href="theme-light.css">
+    <noscript>
+        <div>This site uses JavaScript. If you have deactivated JavaScript, some functions, such as changing topics, may not work</div>
+    </noscript>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let index = 0;
+            let form_errors = [];
+
+            const name = document.getElementById('name');
+            const nameError = document.getElementById('nameError');
+            name.addEventListener('input', (event) => {
+                if(!name.checkValidity()){
+                    nameError.style.display = 'block';
+                    nameError.value = 'A name must include at least two characters. The field is required';
+                }else{
+                    nameError.style.display = 'none';
+                }
+            });
+
+            const email = document.getElementById('email');
+            const emailError = document.getElementById('emailError');
+            email.addEventListener('input', (event) => {
+                if(!email.checkValidity()){
+                    emailError.style.display = 'block';
+                    emailError.value = 'A valid email address must be entered';
+                }else{
+                    emailError.style.display = 'none';
+                }
+            });
+
+            const comments = document.getElementById("comments");
+            const commentsError = document.getElementById("commentsError");
+            const commentsMessage = document.getElementById("commentsMessage");
+
+            comments.addEventListener('input', (event) => {
+                // Check for pattern mismatch
+                if(comments.validity.patternMismatch){
+                    form_errors[index++] = comments.value;
+                    const sErrorArray = JSON.stringify(form_errors);
+                    document.getElementById('formErrors').value = sErrorArray;
+                    comments.value = comments.value.slice(0, -1);
+                    comments.style.border = '3px dashed red';
+                    comments.style.background = '#ff4848';
+                    commentsError.value = 'You entered a disallowed character (only lower and upper case letters, spaces, exclamation marks and periods are allowed)';
+                    commentsError.style.display = 'block';
+                    commentsError.style.opacity = '1';
+                    setTimeout(function(){
+                        commentsError.style.opacity = '0';
+                    }, 2000);
+                    setTimeout(function(){
+                        commentsError.style.display = 'none';
+                    }, 4000);
+                }else{
+                    comments.style.border = '3px solid white';
+                    comments.style.background = '#ececec';
+                }
+
+                // Check for length
+                commentsMessage.style.display = 'block';
+                commentsMessage.value = 'You used ' + comments.value.length + ' out of 140 available characters';
+                if(comments.value.length >= 100 & comments.value.length < 120){
+                    comments.style.border = '3px solid orange';
+                    comments.style.background = 'orange';
+                    commentsMessage.style.color = 'orange';
+                }else if(comments.value.length >= 120){
+                    comments.style.border = '3px solid red';
+                    comments.style.background = 'red';
+                    commentsMessage.style.color = 'red';
+                }else{
+                    commentsMessage.style.color = 'black';
+                }
+            });
+
+            // Themes
+            const darkTheme = document.getElementById('darkTheme');
+            const lightTheme = document.getElementById('lightTheme');
+            const themeStyleSheet = document.getElementById('themeStyleSheet');
+
+            if(localStorage.getItem('theme') == 'dark'){
+                themeStyleSheet.href = 'theme-dark.css';
+            }
+
+            darkTheme.addEventListener('click', function (){
+                themeStyleSheet.href = 'theme-dark.css';
+                localStorage.setItem('theme', 'dark');
+            });
+            lightTheme.addEventListener('click', function (){
+                themeStyleSheet.href = 'theme-light.css';
+                localStorage.setItem('theme', 'light');
+            });
+        });
+    </script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            flex-flow: column;
+            padding-top: 2%;
+            background-color: var(--background, white);
+            color: var(--text);
+        }
+        #themeSwitch{
+            align-self: center;
+        }
+        #lightTheme{
+            background-color: var(--background);
+            border: none;
+            cursor: pointer;
+        }
+        #darkTheme{
+            background-color: var(--background);
+            border: none;
+            cursor: pointer;
+        }
+        form{
+            width: 600px;
+            display: flex;
+            flex-flow: column;
+            padding: 5% 1em 1em;
+            gap: 1em;
+            align-self: center;
+        }
+        field-group{
+            display: flex;
+            flex-flow: column;
+            gap: 0.25em;
+        }
+        input {
+            padding: 0.5em;
+            border-radius: 0.5em;
+            border: none;
+            background-color: #ececec;
+            border: 3px solid white;
+        }
+        label{
+            font-weight: bold;
+            padding: 0 3px;
+        }
+        input[type=submit]:hover{
+            background-color: lightgreen;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        input:user-invalid{
+            border: 3px dashed red;
+        }
+        output{
+            display: none;
+        }
+        .error{
+            color: red;
+            transition: opacity 2s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="themeSwitch">
+        <button id="lightTheme">&#127773;</button>
+        <button id="darkTheme">&#127761;</button>
+    </div>
+
+    <form action="https://httpbin.org/post" method="post">
+        <field-group>
+            <label for="name">Name:</label>
+            <input id="name" name="name" required minlength="2">
+            <output for="name" id="nameError" class="error"></output>
+            <output for="name" id="nameMessage" class="message"></output>
+        </field-group>
+        <field-group>
+            <label for="email">Email:</label>
+            <input id="email" type="email" name="email" required minlength="3">
+            <output for="email" id="emailError" class="error"></output>
+            <output for="email" id="emailMessage" class="message"></output>
+        </field-group>
+        <field-group>
+            <label for="comments">Comments:</label>
+            <input id="comments" name="comments" required minlength="10" maxlength="140" pattern="[a-zA-Z0-9\s.!]+">
+            <output for="comments" id="commentsError" class="error">A valid comment must be inserted. This must contain between 10 and 140 characters and must not contain any special characters (only lower and upper case letters, spaces,
+                exclamation marks and periods allowed)</output>
+            <output for="comments" id="commentsMessage" class="message"></output>
+        </field-group>
+
+        <input name="form-errors" id="formErrors" type="hidden">
+
+        <input name="possible_bot" value="true" type="hidden">
+
+        <input type="submit">
+    </form>
+</body>
+</html>
